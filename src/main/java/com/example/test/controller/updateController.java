@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.RowId;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
@@ -88,7 +87,7 @@ public class updateController {
             System.out.println("파일 저장 실패");
         }
 
-        // 업데이트 테이블 인설트
+        // 업데이트 테이블 업데이트
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("table_name", newFileName);
@@ -101,15 +100,17 @@ public class updateController {
         map1.put("from_value", previousFilename);
         itemService.insert(map1);
 
+        //가장 최근 insert된 아이템 테이블의 PK 데이터
         int recentiid = itemService.recentiid();
 
-        // content 업데이트
+        //json 데이터로 변환
         JSONObject updateContentJson = new JSONObject();
         JSONArray valueArray = new JSONArray();
         valueArray.put(previousFilename);
         valueArray.put(newFileName);
         updateContentJson.put("title", valueArray);
 
+        // update 테이블 content 업데이트
         Map<String, Object> map2 = new HashMap<>();
         map2.put("id", id);
         map2.put("recentiid", recentiid);
