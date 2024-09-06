@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test.mapper.itemInter">
+    <insert id="insertItem" parameterType="map">
+        insert into TABLE_UPDATE_ITEM (iid, TABLE_UPDATE_UID, FIELD_NAME, FROM_VALUE)
+        values (table_update_item_seq.NEXTVAL, #{id}, #{field_name}, #{from_value})
+<!--        <selectKey keyProperty="iid" resultType="int" order="AFTER">-->
+<!--            SELECT LAST_INSERT_ID() from talble_update_item-->
+<!--        </selectKey>-->
+    </insert>
+
+
+<!--    <insert id="insertItem" parameterType="map" useGeneratedKeys="true" keyProperty="iid">-->
+<!--        INSERT INTO TABLE_UPDATE_ITEM (iid, TABLE_UPDATE_UID, FIELD_NAME, FROM_VALUE)-->
+<!--        VALUES (table_update_item_seq.NEXTVAL, #{id}, #{field_name}, #{from_value})-->
+<!--    </insert>-->
+
+
+
+    <!--    <insert id="insertItem" parameterType="map" useGeneratedKeys="true" keyProperty="uid">-->
+<!--        insert into TABLE_UPDATE_ITEM("uid", TABLE_UPDATE_UID, FIELD_NAME, FROM_VALUE)-->
+<!--        values(table_update_item_seq.NEXTVAL, #{uid}, #{field_name}, #{from_value})-->
+<!--    </insert>-->
+
+<!--    <insert id="insertItem" parameterType="map" useGeneratedKeys="true" keyProperty="uid">-->
+<!--        <selectKey keyProperty="uid" resultType="int" order="BEFORE">-->
+<!--            SELECT table_update_item_seq.NEXTVAL FROM dual-->
+<!--        </selectKey>-->
+<!--        INSERT INTO TABLE_UPDATE_ITEM (uid, TABLE_UPDATE_UID, FIELD_NAME, FROM_VALUE)-->
+<!--        VALUES (#{uid}, #{table_update_uid}, #{field_name}, #{from_value})-->
+<!--    </insert>-->
+
+    <select id="recentiid">
+        select max(iid) from TABLE_UPDATE_ITEM
+    </select>
+
+
+</mapper>
