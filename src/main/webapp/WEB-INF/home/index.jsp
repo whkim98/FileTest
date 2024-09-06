@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <title>File Upload and Download</title>
+    <title>파일테스트중</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -99,7 +99,7 @@
 
     <div id="file-upload-modal">
         <div class="modal-content">
-            <h2>파일 업로드</h2>
+            <h2>테스트중</h2>
             <input type="file" name="myfile" id="myfile" class="form-control" required="required">
             <button type="submit">보내기</button>
             <button type="button" onclick="$('#file-upload-modal').hide();">닫기</button>
