@@ -104,6 +104,7 @@ public class updateController {
         int recentiid = itemService.recentiid();
 
         //json 데이터로 변환
+        //json 파일도 저장 시켜야 하나?
         JSONObject updateContentJson = new JSONObject();
         JSONArray valueArray = new JSONArray();
         valueArray.put(previousFilename);
