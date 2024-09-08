@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
@@ -100,27 +103,57 @@ public class updateController {
         map1.put("from_value", previousFilename);
         itemService.insert(map1);
 
-        //가장 최근 insert된 아이템 테이블의 PK 데이터
+        // 가장 최근 insert된 아이템 테이블의 PK 데이터
         int recentiid = itemService.recentiid();
 
-        //json 데이터로 변환
-        //json 파일도 저장 시켜야 하나?
+        // 기존 JSON 데이터 읽기
+        File jsonFile = new File(uploadPath + File.separator + "update_content_" + id + ".json");
         JSONObject updateContentJson = new JSONObject();
+        if (jsonFile.exists()) {
+            try {
+                // JSON 파일에서 기존 데이터 읽어오기
+                String content = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+                updateContentJson = new JSONObject(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 새 데이터 추가
         JSONArray valueArray = new JSONArray();
         valueArray.put(previousFilename);
         valueArray.put(newFileName);
-        updateContentJson.put("title", valueArray);
+        updateContentJson.append("title", valueArray); // 기존 데이터에 추가
 
         // update 테이블 content 업데이트
         Map<String, Object> map2 = new HashMap<>();
         map2.put("id", id);
         map2.put("recentiid", recentiid);
         map2.put("update_content", updateContentJson.toString());
-
         updateService.updateContent(map2);
+
+        // JSON 파일로 저장
+        try {
+            if (!jsonFile.exists()) {
+                jsonFile.createNewFile();
+            }
+
+            // JSON 데이터를 파일로 저장
+            FileWriter fileWriter = new FileWriter(jsonFile);
+            fileWriter.write(updateContentJson.toString(4));
+            fileWriter.flush();
+            fileWriter.close();
+
+            System.out.println("JSON 파일 저장 성공: " + jsonFile.getAbsolutePath());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("JSON 파일 저장 실패");
+        }
 
         return "redirect:/";
     }
+
 
 
 }
