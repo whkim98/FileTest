@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
 import org.json.JSONObject;
 
 @Controller
@@ -122,6 +124,7 @@ public class updateController {
             try {
                 // JSON 파일에서 기존 데이터 읽어오기
                 String content = new String(Files.readAllBytes(jsonFile.toPath()), StandardCharsets.UTF_8);
+                System.out.println(content);
                 updateContentJson = new JSONObject(content);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -135,11 +138,24 @@ public class updateController {
         updateContentJson.append("title", valueArray); // 기존 데이터에 추가
 
         // update 테이블 content 업데이트
+        //단, 실제 비즈니스 로직에선 이렇게 하면 안 됨(같은 파일명이 insert된다던가 동시에 insert처리가 되면 잘못된 파일의 일련번호(pk)가 입력될 수 있음
+        //UUID를 거친다던가 bcrypyto 암호화 및 복호화 패키지를 사용한다던가 하는 과정이 필요로 함
+        /*UUID 복호화(?) 과정
+        * 1. 파일 저장 시 실제 파일명과 UUID명을 동시에 DB저장
+        * 2. 첨부파일 리스트 출력시에는 실제 파일명 출력
+        * 3. 다운로드 로직 상에 실제 파일명과 그에 해당하는 pk값을 조건에 넣어 일치하는 UUID파일명의 파일을 다운로드 시킴
+        * 4. 수정도 마찬가지
+        *
+        * 암호화 패키지 이용시에도 비슷하게 로직 구현하면 됨
+        * */
         Map<String, Object> map2 = new HashMap<>();
         map2.put("id", id);
         map2.put("recentiid", recentiid);
         map2.put("update_content", updateContentJson.toString());
         updateService.updateContent(map2);
+
+        int a = UUID.randomUUID().hashCode();
+        System.out.println(a);
 
         // JSON 파일로 저장
         try {
