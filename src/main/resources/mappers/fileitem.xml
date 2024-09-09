@@ -38,5 +38,9 @@
         delete from TABLE_UPDATE_ITEM where TABLE_UPDATE_UID=#{id}
     </delete>
 
+    <select id="selectDetail" resultType="com.example.test.dto.itemDto" parameterType="int">
+        select * from TABLE_UPDATE_ITEM where TABLE_UPDATE_UID=#{id}
+    </select>
+
 
 </mapper>

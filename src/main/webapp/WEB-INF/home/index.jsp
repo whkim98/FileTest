@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <title>파일테스트중</title>
+    <title>파일 테스트 중</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -23,13 +23,49 @@
                 window.location.href = '/file/download?filename=' + filename; // 파일 다운로드 요청
             });
 
-            // 파일 선택 이벤트 핸들러
-            $('#myfile').change(function() {
-                var filename = $(this).val().split('\\').pop();
-                $('#filename').val(filename); // hidden input에 파일명 저장
+            // 이력조회 버튼 클릭 시 AJAX 요청
+            $('.history-btn').click(function() {
+                var id = $(this).data('id');
+                var $row = $(this).closest('tr');
+                var $detailsRow = $row.next('.details-row');
+
+                if ($detailsRow.length === 0) {
+                    $detailsRow = $('<tr class="details-row"><td colspan="4"><div class="history-list"></div></td></tr>');
+                    $row.after($detailsRow);
+                }
+
+                $.ajax({
+                    url: '/file/detail',
+                    type: 'GET',
+                    data: { id: id },
+                    success: function(response) {
+                        var $list = $detailsRow.find('.history-list');
+                        $list.empty(); // 기존 내용 비우기
+
+                        if (response.length > 0) {
+                            var listHtml = '<ul>';
+                            response.forEach(function(item) {
+                                listHtml += '<li>' + '현재 파일명: ' + item.field_name + '</li>';
+                                listHtml += '<li>' + '이전 파일명: ' + item.from_value + '</li>';
+                            });
+                            listHtml += '</ul>';
+                            $list.html(listHtml);
+                        } else {
+                            $list.html('<p>이력이 없습니다.</p>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('이력 조회 실패');
+                    }
+                });
             });
 
-            // 폼 제출 이벤트 핸들러
+            // 파일 선택 이벤트 핸들러
+            $('#myfile').change(function() {
+                var filenames = Array.from(this.files).map(file => file.name).join(', ');
+                $('#filename').val(filenames); // hidden input에 파일명 저장
+            });
+
             $('#file-form').submit(function(e) {
                 e.preventDefault();
 
@@ -76,16 +112,24 @@
             text-decoration: underline;
             color: blue;
         }
+        .history-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .history-list li {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
+
 <form action="/file/update" method="post" enctype="multipart/form-data">
     <table style="border: 1px solid">
         <tr>
             <th>파일 추가</th>
         </tr>
         <tr>
-            <td><input type="file" name="myfile"></td>
+            <td><input type="file" name="myfiles" multiple></td>
         </tr>
         <tr>
             <td><button type="submit">보냄</button></td>
@@ -99,8 +143,8 @@
 
     <div id="file-upload-modal">
         <div class="modal-content">
-            <h2>테스트중</h2>
-            <input type="file" name="myfile" id="myfile" class="form-control" required="required">
+            <h2>파일 업로드</h2>
+            <input type="file" name="myfile" id="myfile" class="form-control" multiple required="required">
             <button type="submit">보내기</button>
             <button type="button" onclick="$('#file-upload-modal').hide();">닫기</button>
         </div>
@@ -116,6 +160,9 @@
                 </th>
                 <td class="download-file" data-filename="${dto.table_name}">
                         ${dto.table_name}
+                </td>
+                <td>
+                    <button type="button" class="history-btn" data-id="${dto.id}">이력조회</button>
                 </td>
                 <td>
                     <button type="button" onclick="location.href='/file/delete?id=${dto.id}&&file_name=${dto.table_name}'">삭제</button>

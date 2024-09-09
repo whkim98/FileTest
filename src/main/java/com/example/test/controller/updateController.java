@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONObject;
@@ -28,38 +29,46 @@ public class updateController {
     @Autowired
     private itemService itemService;
 
+    //원래는 해당 정보(ex. 게시판)에 해당하는 첨부파일을 해서 pk, fk 관계를 통해 해당 정보에 해당하는 파일만 보이도록 하는
+    //로직이 필요하지만 지금은 제외함. 어떤 식으로 진행될 지 모르기 때문
     @PostMapping("/file/update")
-    public String update(@RequestParam("myfile") MultipartFile myfile,
+    public String update(@RequestParam("myfiles") MultipartFile[] myfiles,
                          HttpServletRequest request) {
 
         // 파일 업로드 경로 설정
         String uploadPath = request.getSession().getServletContext().getRealPath("/resources/file");
-        System.out.println("업로드 경로: " + uploadPath + myfile.getOriginalFilename());
-
-        // 파일 이름 가져오기
-        String testFile = myfile.getOriginalFilename();
+        System.out.println("업로드 경로: " + uploadPath);
 
         // 파일 저장 경로 생성
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) {
-            uploadDir.mkdirs();  // 디렉토리가 없으면 생성
+            uploadDir.mkdir();  // 디렉토리가 없으면 생성
         }
 
-        try {
-            // 파일을 실제 경로에 저장
-            File saveFile = new File(uploadPath, testFile);
-            myfile.transferTo(saveFile);  // 파일 저장
+        System.out.println(Arrays.toString(myfiles));
 
-            System.out.println("파일 저장 완료: " + saveFile.getAbsolutePath());
+        for (MultipartFile myfile : myfiles) {
+            if (!myfile.isEmpty()) {
+                // 파일 이름 가져오기
+                String testFile = myfile.getOriginalFilename();
+                try {
+                    // 파일을 실제 경로에 저장
+                    File saveFile = new File(uploadPath, testFile);
+                    myfile.transferTo(saveFile);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+                    System.out.println("파일 저장 완료: " + saveFile.getAbsolutePath());
+
+                    updateService.insert(testFile);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-
-        updateService.insert(testFile);
 
         return "redirect:/";
     }
+
 
 
     @PostMapping("/file/updatee")
