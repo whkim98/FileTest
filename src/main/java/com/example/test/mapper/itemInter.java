@@ -8,4 +8,5 @@ import java.util.Map;
 public interface itemInter {
     void insertItem(Map<String, Object> map1);
     int recentiid();
+    void deleteItem(int id);
 }

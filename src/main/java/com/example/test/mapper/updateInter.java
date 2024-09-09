@@ -12,4 +12,5 @@ public interface updateInter {
     List<updateDto> fileList();
     void updateFile(Map<String, Object> map);
     void updateContent(Map<String, Object> map);
+    void deleteFile(int id);
 }

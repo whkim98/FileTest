@@ -34,5 +34,9 @@
         select max(iid) from TABLE_UPDATE_ITEM
     </select>
 
+    <delete id="deleteItem" parameterType="int">
+        delete from TABLE_UPDATE_ITEM where TABLE_UPDATE_UID=#{id}
+    </delete>
+
 
 </mapper>
