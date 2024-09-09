@@ -28,4 +28,8 @@ public class updateService {
     public void updateContent(Map<String, Object> map){
         updateInter.updateContent(map);
     }
+
+    public void deleteFile(int id){
+        updateInter.deleteFile(id);
+    }
 }

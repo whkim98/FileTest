@@ -20,4 +20,8 @@
     <select id="selectUid">
         select id from TABLE_UPDATE where UPDATE_CONTENT is null
     </select>
+
+    <delete id="deleteFile" parameterType="int">
+        delete from TABLE_UPDATE where id=#{id}
+    </delete>
 </mapper>

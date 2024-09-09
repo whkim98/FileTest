@@ -117,6 +117,9 @@
                 <td class="download-file" data-filename="${dto.table_name}">
                         ${dto.table_name}
                 </td>
+                <td>
+                    <button type="button" onclick="location.href='/file/delete?id=${dto.id}&&file_name=${dto.table_name}'">삭제</button>
+                </td>
             </tr>
         </c:forEach>
     </table>

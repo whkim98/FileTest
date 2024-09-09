@@ -23,4 +23,8 @@ public class itemService {
     public int recentiid(){
         return itemInter.recentiid();
     }
+
+    public void deleteItem(int id){
+        itemInter.deleteItem(id);
+    }
 }
